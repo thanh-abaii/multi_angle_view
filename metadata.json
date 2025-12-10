@@ -1,0 +1,5 @@
+{
+  "name": "NanoBanana Multi-Angle View",
+  "description": "Upload an image and generate multiple camera angles using the Gemini NanoBanana model.",
+  "requestFramePermissions": []
+}

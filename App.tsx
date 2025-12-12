@@ -149,7 +149,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-200 selection:bg-indigo-500/30 flex flex-col font-sans">
+    <div className="h-screen overflow-hidden bg-[#0B0F19] text-slate-200 selection:bg-indigo-500/30 flex flex-col font-sans">
       
       {/* Decorative Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -175,39 +175,38 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      {/* Main Content Area - Split Layout */}
-      <main className="flex-1 w-full max-w-[1920px] mx-auto px-4 py-8 lg:px-8 relative z-10">
+      {/* Main Content Area - Locked Layout */}
+      <main className="flex-1 w-full max-w-[1920px] mx-auto px-4 py-4 lg:px-8 relative z-10 h-[calc(100vh-64px)] overflow-hidden">
         
-        <div className="lg:flex lg:gap-10 items-start">
+        {/* Container for split layout */}
+        <div className="lg:flex lg:gap-16 xl:gap-24 items-start h-full">
           
-          {/* Left Panel (1/3 Width) - Sticky Sidebar */}
-          <div className="w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 flex flex-col gap-8 lg:sticky lg:top-24">
+          {/* Left Panel - Control Center */}
+          <div className="w-full lg:w-[320px] xl:w-[360px] flex-shrink-0 flex flex-col gap-6 h-full overflow-y-auto no-scrollbar pb-8">
             
             {/* Header Info */}
-            <div className="space-y-3">
-              <h1 className="text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-400">
+            <div className="space-y-2 shrink-0">
+              <h1 className="text-2xl lg:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-400">
                 Multi-Angle Generator
               </h1>
-              <p className="text-slate-400 text-base leading-relaxed">
+              <p className="text-slate-400 text-sm leading-relaxed">
                 Transform a single photo into a complete studio showcase using generative AI.
               </p>
             </div>
 
-            {/* Control Panel */}
-            <div className="bg-[#131B2C]/80 border border-white/5 rounded-2xl p-6 shadow-2xl backdrop-blur-sm">
+            {/* Control Panel Card */}
+            <div className="bg-[#131B2C]/60 border border-white/[0.02] rounded-2xl p-5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] backdrop-blur-xl shrink-0">
               <div className="flex items-center justify-between mb-4">
                  <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                    <Command size={14} /> Control Center
                  </h2>
               </div>
               
-              {/* Upload Section */}
               <UploadArea 
                 onImageSelected={handleImageSelected} 
                 currentImage={originalImage} 
               />
 
-              {/* Custom Angle Input */}
               <div className="mt-4">
                  <div className="flex items-center justify-between mb-2">
                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -220,7 +219,7 @@ const App: React.FC = () => {
                       type="text" 
                       value={customPrompt}
                       onChange={(e) => setCustomPrompt(e.target.value)}
-                      placeholder="e.g. Back view, Cyberpunk style..."
+                      placeholder="e.g. Back view..."
                       className="w-full bg-[#0F1523] border border-slate-700 rounded-xl pl-4 pr-10 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all placeholder:text-slate-600 focus:bg-[#131B2C]"
                     />
                     <div className="absolute right-3 top-3 text-slate-600 group-focus-within:text-indigo-500 transition-colors">
@@ -229,53 +228,48 @@ const App: React.FC = () => {
                  </div>
               </div>
 
-              {/* Generate Button */}
               <div className="mt-6">
                 <button
                   onClick={handleGenerate}
                   disabled={!originalImage || appState === AppState.GENERATING}
                   className={`
-                    w-full relative overflow-hidden group px-6 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-xl
+                    w-full relative overflow-hidden group px-6 py-4 rounded-xl font-semibold text-lg transition-all duration-200
                     ${!originalImage 
                       ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed border border-white/5' 
                       : appState === AppState.GENERATING
                         ? 'bg-indigo-900/50 text-indigo-300 cursor-wait border border-indigo-500/20'
-                        : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/20 hover:shadow-indigo-600/40 hover:-translate-y-0.5 border border-indigo-500'
+                        : 'bg-gradient-to-b from-indigo-500 to-indigo-700 text-white shadow-[0_4px_14px_0_rgba(99,102,241,0.39)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.23)] hover:brightness-110 hover:-translate-y-[1px] active:translate-y-[0px] border-t border-indigo-400/50'
                     }
                   `}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     {appState === AppState.GENERATING ? (
                       <>
-                        <Sparkles className="animate-spin" size={20} /> Processing...
+                        <Sparkles className="animate-spin" size={20} strokeWidth={1.5} /> Processing...
                       </>
                     ) : (
                       <>
-                        <Sparkles size={20} /> Generate Angles
+                        <Sparkles size={20} strokeWidth={1.5} /> Generate Angles
                       </>
                     )}
                   </span>
-                  {originalImage && appState !== AppState.GENERATING && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[length:200%_auto] animate-gradient" />
-                  )}
                 </button>
               </div>
             </div>
             
-            <div className="hidden lg:block border-t border-white/5 pt-6">
+            <div className="hidden lg:block border-t border-white/5 pt-4 shrink-0">
                <div className="flex items-center justify-between text-xs text-slate-600">
-                  <span>v1.0.0</span>
+                  <span>v1.1</span>
                   <span>Powered by Gemini</span>
                </div>
             </div>
 
           </div>
 
-          {/* Right Panel (2/3 Width) - Content */}
-          <div className="flex-1 mt-12 lg:mt-0 min-h-[600px]">
-            {/* Placeholder state if no results yet */}
+          {/* Right Panel - Content Grid */}
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
             {results.length === 0 ? (
-               <div className="h-full border border-dashed border-white/5 bg-white/[0.02] rounded-3xl flex flex-col items-center justify-center text-slate-600 p-12 min-h-[500px]">
+               <div className="h-full border border-dashed border-white/5 bg-white/[0.02] rounded-3xl flex flex-col items-center justify-center text-slate-600 p-12">
                  <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner border border-white/5">
                     <Camera size={32} className="opacity-40" />
                  </div>
@@ -304,6 +298,14 @@ const App: React.FC = () => {
         }
         .animate-gradient {
           animation: gradient 3s ease infinite;
+        }
+        /* Hide Scrollbar but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </div>

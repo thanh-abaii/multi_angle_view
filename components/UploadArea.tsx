@@ -56,7 +56,7 @@ const UploadArea: React.FC<UploadAreaProps> = ({ onImageSelected, currentImage }
               <img 
                 src={currentImage} 
                 alt="Uploaded Preview" 
-                className="w-full h-auto max-h-[400px] object-contain bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-slate-900"
+                className="w-full h-auto max-h-[260px] object-contain bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-slate-900"
               />
               
               {/* Scanline Effect Overlay */}
@@ -69,13 +69,7 @@ const UploadArea: React.FC<UploadAreaProps> = ({ onImageSelected, currentImage }
               </div>
             </div>
             
-            <div className="w-full flex justify-between items-center mt-3 px-1">
-               <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-widest">Source_Input_01</span>
-               <div className="flex items-center gap-1.5">
-                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                 <span className="text-[10px] text-slate-400">Active</span>
-               </div>
-            </div>
+            {/* Removed redundant status label row */}
           </div>
         ) : (
           <div className="py-16 flex flex-col items-center justify-center text-slate-500 group-hover:text-indigo-400 transition-colors relative">

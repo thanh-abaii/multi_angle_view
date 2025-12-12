@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1] - 2025-12-10
+
+### 💎 Visual & Layout Enhancements
+
+- **16:9 No-Scroll Layout**: Completely optimized the main grid to fit within a standard viewport (1080p) without requiring page scrolling.
+  - Implemented dynamic row heights.
+  - Adjusted card aspect ratios to stretch and fill available space.
+- **Lightbox Preview**: Added a cinematic full-screen preview mode.
+  - Users can now click any generated image to view it in high resolution.
+  - Includes backdrop blur and focused download controls.
+  - Supports `Escape` key to close.
+- **UI Polish**:
+  - Enhanced "Download All" button size and styling for better call-to-action visibility.
+  - Updated sidebar footer to reflect **v1.1**.
+  - Refined hover states for grid items with a purple/indigo accent border (`#7D8CFF`).
+
 ## [1.0.0] - 2025-12-10
 
 ### 🎉 Initial Release

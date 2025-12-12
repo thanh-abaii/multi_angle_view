@@ -2,7 +2,7 @@
 
 NanoBanana Studio is a high-performance web application that leverages Google's **Gemini 2.5 Flash Image** model to transform single static images into comprehensive multi-angle cinematic showcases. Designed for creative professionals, it generates consistent character or object views from various camera perspectives instantly.
 
-![NanoBanana Studio Screenshot](screenshot.png)
+![NanoBanana Studio Screenshot](./screenshot.png)
 
 ## ✨ Features
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Sparkles, Command } from 'lucide-react';
+import { Camera, Sparkles, Command, Type } from 'lucide-react';
 import UploadArea from './components/UploadArea';
 import GeneratedGrid from './components/GeneratedGrid';
 import { generateAngleImage } from './services/geminiService';
@@ -20,6 +20,7 @@ const ANGLES: AngleOption[] = [
 const App: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [rawFile, setRawFile] = useState<File | null>(null);
+  const [customPrompt, setCustomPrompt] = useState<string>('');
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
   const [results, setResults] = useState<GeneratedImage[]>([]);
 
@@ -42,11 +43,24 @@ const App: React.FC = () => {
 
     setAppState(AppState.GENERATING);
     
+    // Prepare tasks: Predefined angles + Optional Custom angle
+    const tasks: AngleOption[] = [...ANGLES];
+    
+    if (customPrompt.trim()) {
+      tasks.push({
+        id: 'custom',
+        label: customPrompt.trim(), 
+        promptSuffix: customPrompt.trim()
+      });
+    }
+    
     // Initialize results with loading state
-    const initialResults: GeneratedImage[] = ANGLES.map(angle => ({
-      angle: angle.label,
+    const initialResults: GeneratedImage[] = tasks.map(angle => ({
+      // Truncate label if it's too long (mostly for custom prompts)
+      angle: angle.id === 'custom' && angle.label.length > 20 ? angle.label.substring(0, 18) + '...' : angle.label,
       imageUrl: '',
-      loading: true
+      loading: true,
+      promptSuffix: angle.promptSuffix
     }));
     setResults(initialResults);
 
@@ -55,9 +69,9 @@ const App: React.FC = () => {
     const mimeType = rawFile.type;
 
     // Process each angle in parallel
-    const promises = ANGLES.map(async (angle, index) => {
+    const promises = tasks.map(async (task, index) => {
       try {
-        const generatedUrl = await generateAngleImage(base64Data, mimeType, angle.promptSuffix);
+        const generatedUrl = await generateAngleImage(base64Data, mimeType, task.promptSuffix);
         
         // Update the specific result item as soon as it's ready
         setResults(prev => {
@@ -70,7 +84,7 @@ const App: React.FC = () => {
           return newResults;
         });
       } catch (error) {
-        console.error(`Failed to generate ${angle.label}:`, error);
+        console.error(`Failed to generate ${task.label}:`, error);
         // Extract specific error message
         const errorMessage = error instanceof Error ? error.message : "Generation failed";
 
@@ -94,7 +108,7 @@ const App: React.FC = () => {
   const handleRegenerate = async (index: number) => {
     if (!originalImage || !rawFile) return;
 
-    const angle = ANGLES[index];
+    const item = results[index]; // Use state item as source of truth (supports Custom prompts)
     const base64Data = originalImage.split(',')[1];
     const mimeType = rawFile.type;
 
@@ -106,7 +120,7 @@ const App: React.FC = () => {
     });
 
     try {
-      const generatedUrl = await generateAngleImage(base64Data, mimeType, angle.promptSuffix);
+      const generatedUrl = await generateAngleImage(base64Data, mimeType, item.promptSuffix);
       
       setResults(prev => {
         const newResults = [...prev];
@@ -118,7 +132,7 @@ const App: React.FC = () => {
         return newResults;
       });
     } catch (error) {
-      console.error(`Failed to regenerate ${angle.label}:`, error);
+      console.error(`Failed to regenerate ${item.angle}:`, error);
       // Extract specific error message
       const errorMessage = error instanceof Error ? error.message : "Retry failed";
       
@@ -192,6 +206,28 @@ const App: React.FC = () => {
                 onImageSelected={handleImageSelected} 
                 currentImage={originalImage} 
               />
+
+              {/* Custom Angle Input */}
+              <div className="mt-4">
+                 <div className="flex items-center justify-between mb-2">
+                   <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                     Custom Angle
+                   </label>
+                   <span className="text-[10px] text-slate-600 bg-slate-800/50 px-1.5 py-0.5 rounded border border-white/5">Optional</span>
+                 </div>
+                 <div className="relative group">
+                    <input 
+                      type="text" 
+                      value={customPrompt}
+                      onChange={(e) => setCustomPrompt(e.target.value)}
+                      placeholder="e.g. Back view, Cyberpunk style..."
+                      className="w-full bg-[#0F1523] border border-slate-700 rounded-xl pl-4 pr-10 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all placeholder:text-slate-600 focus:bg-[#131B2C]"
+                    />
+                    <div className="absolute right-3 top-3 text-slate-600 group-focus-within:text-indigo-500 transition-colors">
+                      <Type size={16} /> 
+                    </div>
+                 </div>
+              </div>
 
               {/* Generate Button */}
               <div className="mt-6">

@@ -3,6 +3,7 @@ export interface GeneratedImage {
   imageUrl: string;
   loading: boolean;
   error?: string;
+  promptSuffix: string;
 }
 
 export interface AngleOption {
